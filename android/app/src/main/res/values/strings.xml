@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DynRedirect</string>
+    <string name="title_activity_main">DynRedirect</string>
+    <string name="package_name">me.scolastico.dyn.redirect</string>
+    <string name="custom_url_scheme">me.scolastico.dyn.redirect</string>
+</resources>

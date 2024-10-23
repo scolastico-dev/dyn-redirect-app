@@ -1,0 +1,43 @@
+{
+  "name": "dyn-redirect-app",
+  "version": "0.0.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "dev:android": "cap run android",
+    "build": "npm run build:license && npm run build:vite && npm run build:sync",
+    "build:license": "npm run build:license:gen && npm run build:license:add && npm run build:license:move",
+    "build:license:gen": "generate-license-file --input package.json --output public/licenses.txt --overwrite",
+    "build:license:add": "echo \"This project is licensed under the AGPL-3.0-only license\\n\\n$(cat ./LICENSE)\\n\\n---\\n\\n$(cat ./public/licenses.txt)\" > public/licenses.tmp",
+    "build:license:move": "mv public/licenses.tmp public/licenses.txt",
+    "build:vite": "vite build",
+    "build:sync": "cap sync",
+    "preview": "vite preview",
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/splash-screen": "^6.0.2",
+    "axios": "^1.7.7",
+    "vue": "^3.5.12"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "@eslint/js": "^9.12.0",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "@vue/eslint-config-prettier": "^10.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.12.0",
+    "eslint-plugin-vue": "^9.29.0",
+    "generate-license-file": "^3.5.1",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.8",
+    "vite-plugin-vue-devtools": "^7.4.6"
+  }
+}
