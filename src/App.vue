@@ -16,34 +16,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { Preferences } from '@capacitor/preferences'
 import MainScreen from './components/MainScreen.vue'
 import SettingsScreen from './components/SettingsScreen.vue'
 import './assets/main.css'
 
 const STORAGE_NAME = 'dyn-redirect-settings'
 
-const rawData = localStorage.getItem(STORAGE_NAME)
 const view = ref('main')
-const settings = ref(
-  rawData
-    ? JSON.parse(rawData)
-    : {
-        profiles: [
-          {
-            name: 'Profile 1',
-            url: 'https://',
-            secret: '',
-          },
-        ],
-        history: [],
-      },
-)
+const settings = ref({
+  profiles: [
+    {
+      name: 'Profile 1',
+      url: 'https://',
+      secret: '',
+    },
+  ],
+  history: [],
+  selectedProfile: 0,
+})
+
+onMounted(() => {
+  Preferences.get({ key: STORAGE_NAME }).then(result => {
+    if (result.value) {
+      settings.value = JSON.parse(result.value)
+    } else {
+      save(settings.value)
+    }
+  })
+})
 
 function save(data) {
   settings.value = data
-  localStorage.setItem(STORAGE_NAME, JSON.stringify(data))
+  Preferences.set({ key: STORAGE_NAME, value: JSON.stringify(data) })
 }
-
-save(settings.value)
 </script>

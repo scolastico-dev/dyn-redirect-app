@@ -1,7 +1,8 @@
+name: Build and Release
+
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -10,6 +11,18 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+
+      - name: Get version tag
+        id: get_version
+        run: echo ::set-output name=version::$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+      - name: Get version count
+        id: get_version_count
+        run: echo ::set-output name=version_count::$(git tag | wc -l)
+
+      - name: Set version code
+        run: sed -i "s/versionCode 1/versionCode ${{ steps.get_version_count.outputs.version_count }}/g" android/app/build.gradle
+      - name: Set version name
+        run: sed -i "s/versionName \"1.0\"/versionName \"${{ steps.get_version.outputs.version }}\"/g" android/app/build.gradle
 
       - name: Setup java
         uses: actions/setup-java@v3
@@ -60,7 +73,7 @@ jobs:
       - uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          releaseName: ${{ steps.get_version.outputs.version }}
           packageName: me.scolastico.dyn.redirect
           releaseFiles: |
-            ./android/app/build/outputs/bundle/release/app-release-signed.aab,
-            ./android/app/build/outputs/apk/debug/app-debug.apk
+            ./android/app/build/outputs/bundle/release/app-release-signed.aab

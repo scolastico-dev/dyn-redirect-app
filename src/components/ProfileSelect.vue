@@ -20,6 +20,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { Preferences } from '@capacitor/preferences'
 const STORAGE_NAME = 'dyn-redirect-selected-profile'
 export default defineComponent({
   props: ['settings', 'specialText'],
@@ -28,19 +29,22 @@ export default defineComponent({
     profile: 0,
   }),
   mounted() {
-    const profile = Number(localStorage.getItem(STORAGE_NAME)) || 0
-    if (profile < this.settings.profiles.length) this.setProfile(profile)
+    Preferences.get({ key: STORAGE_NAME }).then(result => {
+      if (result.value) this.setProfile(parseInt(result.value))
+    })
   },
   watch: {
     profile(val, old) {
       if (val === old) return
-      if (val >= 0) localStorage.setItem(STORAGE_NAME, val)
+      if (val >= 0)
+        Preferences.set({ key: STORAGE_NAME, value: val.toString() })
       this.$emit('change', val)
     },
   },
   methods: {
     setProfile(index) {
       if (index < 0) index = 0
+      if (index >= this.settings.profiles.length) index = 0
       this.profile = index
     },
   },

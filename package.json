@@ -21,6 +21,7 @@
   "dependencies": {
     "@capacitor/android": "^6.1.2",
     "@capacitor/core": "^6.1.2",
+    "@capacitor/preferences": "^6.0.3",
     "@capacitor/splash-screen": "^6.0.2",
     "axios": "^1.7.7",
     "vue": "^3.5.12"
