@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get version tag
         id: get_version
@@ -20,8 +22,8 @@ jobs:
       - name: Get version count
         id: get_version_count
         run: |
-          echo $(git tag --list | wc -l)
-          echo "version_count=$(git tag --list | wc -l)" >> $GITHUB_OUTPUT
+          echo $(( $(git tag --list | wc -l) + 1 ))
+          echo "version_count=$(( $(git tag --list | wc -l) + 1 ))" >> $GITHUB_OUTPUT
 
       - name: Set versions in Gradle file
         run: |
