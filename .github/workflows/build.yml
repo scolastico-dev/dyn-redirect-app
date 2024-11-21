@@ -14,15 +14,20 @@ jobs:
 
       - name: Get version tag
         id: get_version
-        run: echo ::set-output name=version::$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+        run: |
+          echo $(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          echo "version=$(echo $GITHUB_REF | sed 's/refs\/tags\///')" >> $GITHUB_OUTPUT
       - name: Get version count
         id: get_version_count
-        run: echo ::set-output name=version_count::$(git tag | wc -l)
+        run: |
+          echo $(git tag --list | wc -l)
+          echo "version_count=$(git tag --list | wc -l)" >> $GITHUB_OUTPUT
 
-      - name: Set version code
-        run: sed -i "s/versionCode 1/versionCode ${{ steps.get_version_count.outputs.version_count }}/g" android/app/build.gradle
-      - name: Set version name
-        run: sed -i "s/versionName \"1.0\"/versionName \"${{ steps.get_version.outputs.version }}\"/g" android/app/build.gradle
+      - name: Set versions in Gradle file
+        run: |
+          sed -i "s/versionCode [0-9]\+/versionCode ${{ steps.get_version_count.outputs.version_count }}/" android/app/build.gradle
+          sed -i "s/versionName \".*\"/versionName \"${{ steps.get_version.outputs.version }}\"/" android/app/build.gradle
+          cat android/app/build.gradle
 
       - name: Setup java
         uses: actions/setup-java@v3
